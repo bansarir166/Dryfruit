@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/ProductDetail";
 import ProductGrid from "@/components/ProductGrid";
-import { getProductBySlug, products } from "@/data/products";
+import { getCatalogProductBySlug, getCatalogProducts } from "@/lib/catalog";
+import { products as staticProducts } from "@/data/products";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return staticProducts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -14,16 +17,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getCatalogProductBySlug(slug);
   return { title: product?.name ?? "Product" };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getCatalogProductBySlug(slug);
   if (!product) notFound();
 
-  const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const all = await getCatalogProducts();
+  const related = all
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <>

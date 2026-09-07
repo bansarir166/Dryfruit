@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, type MouseEvent } from "react";
-import { getBestsellers } from "@/data/products";
+import type { Product } from "@/data/products";
 import ProductCard from "./ProductCard";
 
-export default function NouraEdit() {
+export default function NouraEdit({ products }: { products: Product[] }) {
   const scroller = useRef<HTMLDivElement>(null);
-  const items = getBestsellers();
+  const items = products.filter((p) => p.bestseller);
   const drag = useRef({ down: false, startX: 0, scroll: 0 });
 
   const onDown = (e: MouseEvent) => {
@@ -23,6 +23,8 @@ export default function NouraEdit() {
     const x = e.pageX - scroller.current.offsetLeft;
     scroller.current.scrollLeft = drag.current.scroll - (x - drag.current.startX);
   };
+
+  if (!items.length) return null;
 
   return (
     <section className="bg-ivory">

@@ -6,18 +6,46 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
-import { searchProducts } from "@/data/products";
+import type { Product } from "@/data/products";
 import { formatINR } from "@/lib/utils";
 
 export default function SearchModal() {
   const { searchOpen, setSearchOpen } = useStore();
   const [query, setQuery] = useState("");
+  const [catalog, setCatalog] = useState<Product[]>([]);
 
   useEffect(() => {
-    if (!searchOpen) setQuery("");
+    if (!searchOpen) {
+      setQuery("");
+      return;
+    }
+
+    let cancelled = false;
+    fetch("/api/catalog")
+      .then((r) => r.json())
+      .then((data: { products?: Product[] }) => {
+        if (!cancelled) setCatalog(data.products || []);
+      })
+      .catch(() => {
+        if (!cancelled) setCatalog([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [searchOpen]);
 
-  const results = useMemo(() => searchProducts(query), [query]);
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return catalog.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.category.includes(q) ||
+        p.origin.toLowerCase().includes(q) ||
+        p.tagline.toLowerCase().includes(q)
+    );
+  }, [query, catalog]);
 
   return (
     <AnimatePresence>

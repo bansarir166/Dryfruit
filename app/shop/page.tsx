@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import ShopClient from "@/components/ShopClient";
-import { products } from "@/data/products";
+import { getCatalogProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Shop",
 };
 
-export default function ShopPage() {
+export const revalidate = 60;
+
+export default async function ShopPage() {
+  const products = await getCatalogProducts();
   return <ShopClient products={products} />;
 }

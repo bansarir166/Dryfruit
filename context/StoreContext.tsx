@@ -41,15 +41,16 @@ type StoreContextValue = {
   clearCart: () => void;
   toggleWishlist: (productId: string) => void;
   isWishlisted: (productId: string) => boolean;
-  applyCoupon: (code: string) => boolean;
+  applyCoupon: (code: string) => Promise<boolean>;
   removeCoupon: () => void;
 };
 
 const CART_KEY = "noura-cart";
 const WISH_KEY = "noura-wishlist";
 const COUPON_KEY = "noura-coupon";
+const COUPON_RATE_KEY = "noura-coupon-rate";
 
-const COUPONS: Record<string, number> = {
+const FALLBACK_COUPONS: Record<string, number> = {
   NOURA10: 0.1,
   GIFT20: 0.2,
 };
@@ -60,6 +61,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [coupon, setCoupon] = useState<string | null>(null);
+  const [couponRate, setCouponRate] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -69,9 +71,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const c = localStorage.getItem(CART_KEY);
       const w = localStorage.getItem(WISH_KEY);
       const p = localStorage.getItem(COUPON_KEY);
+      const r = localStorage.getItem(COUPON_RATE_KEY);
       if (c) setCart(JSON.parse(c));
       if (w) setWishlist(JSON.parse(w));
       if (p) setCoupon(p);
+      if (r) setCouponRate(Number(r) || 0);
+      else if (p && FALLBACK_COUPONS[p]) setCouponRate(FALLBACK_COUPONS[p]);
     } catch {
       /* ignore */
     }
@@ -90,9 +95,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (coupon) localStorage.setItem(COUPON_KEY, coupon);
-    else localStorage.removeItem(COUPON_KEY);
-  }, [coupon, hydrated]);
+    if (coupon) {
+      localStorage.setItem(COUPON_KEY, coupon);
+      localStorage.setItem(COUPON_RATE_KEY, String(couponRate));
+    } else {
+      localStorage.removeItem(COUPON_KEY);
+      localStorage.removeItem(COUPON_RATE_KEY);
+    }
+  }, [coupon, couponRate, hydrated]);
 
   const addToCart = useCallback(
     (product: Product, variant: WeightVariant, quantity = 1) => {
@@ -144,6 +154,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const clearCart = useCallback(() => {
     setCart([]);
     setCoupon(null);
+    setCouponRate(0);
+    try {
+      localStorage.removeItem(CART_KEY);
+      localStorage.removeItem(COUPON_KEY);
+      localStorage.removeItem(COUPON_RATE_KEY);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const toggleWishlist = useCallback((productId: string) => {
@@ -157,16 +175,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [wishlist]
   );
 
-  const applyCoupon = useCallback((code: string) => {
+  const applyCoupon = useCallback(async (code: string) => {
     const normalised = code.trim().toUpperCase();
-    if (COUPONS[normalised]) {
+    if (!normalised) return false;
+
+    try {
+      const res = await fetch(`/api/coupons?code=${encodeURIComponent(normalised)}`);
+      if (res.ok) {
+        const data = (await res.json()) as { code: string; percent: number };
+        setCoupon(data.code);
+        setCouponRate(Number(data.percent) || 0);
+        return true;
+      }
+    } catch {
+      /* fall through */
+    }
+
+    if (FALLBACK_COUPONS[normalised]) {
       setCoupon(normalised);
+      setCouponRate(FALLBACK_COUPONS[normalised]);
       return true;
     }
     return false;
   }, []);
 
-  const removeCoupon = useCallback(() => setCoupon(null), []);
+  const removeCoupon = useCallback(() => {
+    setCoupon(null);
+    setCouponRate(0);
+  }, []);
 
   const cartCount = useMemo(
     () => cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -179,9 +215,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   const discount = useMemo(() => {
-    if (!coupon) return 0;
-    return Math.round(cartTotal * (COUPONS[coupon] ?? 0));
-  }, [coupon, cartTotal]);
+    if (!coupon || !couponRate) return 0;
+    return Math.round(cartTotal * couponRate);
+  }, [coupon, couponRate, cartTotal]);
 
   const value = useMemo(
     () => ({

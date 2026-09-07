@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ShopClient from "@/components/ShopClient";
-import { categories, products, type CategorySlug } from "@/data/products";
+import { categories, type CategorySlug } from "@/data/products";
+import { getCatalogProducts } from "@/lib/catalog";
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
@@ -25,6 +28,8 @@ export default async function CategoryPage({
   const { category } = await params;
   const item = categories.find((c) => c.slug === category);
   if (!item) notFound();
+
+  const products = await getCatalogProducts();
 
   return (
     <ShopClient

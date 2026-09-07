@@ -1,11 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { getFeaturedProducts } from "@/data/products";
+import type { Product } from "@/data/products";
 import ProductCard from "./ProductCard";
 
-export default function FeaturedProducts() {
-  const items = getFeaturedProducts();
+export default function FeaturedProducts({ products }: { products: Product[] }) {
+  const items = products.filter((p) => p.featured).slice(0, 4);
+
+  if (!items.length) return null;
 
   return (
     <section className="bg-cream/60">

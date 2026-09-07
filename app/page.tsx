@@ -9,18 +9,23 @@ import NouraEdit from "@/components/NouraEdit";
 import Testimonials from "@/components/Testimonials";
 import InstagramGallery from "@/components/InstagramGallery";
 import Newsletter from "@/components/Newsletter";
+import { getCatalogProducts } from "@/lib/catalog";
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const products = await getCatalogProducts();
+
   return (
     <>
       <Hero />
       <Collection />
-      <FeaturedProducts />
+      <FeaturedProducts products={products} />
       <BrandStory />
       <QualitySection />
       <BuildYourBox />
       <GiftSection />
-      <NouraEdit />
+      <NouraEdit products={products} />
       <Testimonials />
       <InstagramGallery />
       <Newsletter />

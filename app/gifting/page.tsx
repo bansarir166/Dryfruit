@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import ProductGrid from "@/components/ProductGrid";
-import { getProductsByCategory } from "@/data/products";
+import { getCatalogByCategory } from "@/lib/catalog";
 
 export const metadata: Metadata = { title: "Gifting" };
+export const revalidate = 60;
 
-export default function GiftingPage() {
-  const boxes = getProductsByCategory("gift-boxes");
+export default async function GiftingPage() {
+  const boxes = await getCatalogByCategory("gift-boxes");
 
   return (
     <div className="bg-ivory pt-24">

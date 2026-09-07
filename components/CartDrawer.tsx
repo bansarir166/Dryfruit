@@ -159,7 +159,7 @@ function CouponRow({
   onRemove,
 }: {
   coupon: string | null;
-  onApply: (code: string) => boolean;
+  onApply: (code: string) => boolean | Promise<boolean>;
   onRemove: () => void;
 }) {
   return (
@@ -168,7 +168,7 @@ function CouponRow({
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         const code = String(data.get("coupon") || "");
-        onApply(code);
+        void onApply(code);
       }}
       className="flex gap-2"
     >
