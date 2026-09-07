@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatINR } from "@/lib/utils";
-import type { AdminOrder } from "@/lib/admin";
+import type { AdminOrder } from "@/lib/admin-shared";
 
 function startOfDayISO() {
   const d = new Date();

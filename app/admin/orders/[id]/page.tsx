@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatINR } from "@/lib/utils";
-import type { AdminOrder } from "@/lib/admin";
+import type { AdminOrder } from "@/lib/admin-shared";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
 
 type Props = { params: Promise<{ id: string }> };

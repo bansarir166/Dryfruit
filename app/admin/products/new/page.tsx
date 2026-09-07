@@ -1,5 +1,6 @@
 import Link from "next/link";
-import ProductForm, { emptyProductForm } from "@/components/admin/ProductForm";
+import ProductForm from "@/components/admin/ProductForm";
+import { emptyProductForm } from "@/lib/product-form";
 
 export default function AdminNewProductPage() {
   return (

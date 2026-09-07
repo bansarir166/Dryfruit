@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ORDER_STATUSES } from "@/lib/admin";
+import { ORDER_STATUSES } from "@/lib/admin-shared";
 
 export default function OrderStatusForm({
   orderId,

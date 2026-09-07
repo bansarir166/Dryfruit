@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { mapProductRow, type ProductRow } from "@/lib/catalog";
-import ProductForm, { type ProductFormValues } from "@/components/admin/ProductForm";
+import ProductForm from "@/components/admin/ProductForm";
+import { type ProductFormValues } from "@/lib/product-form";
 
 type Props = { params: Promise<{ id: string }> };
 
