@@ -4,7 +4,27 @@ import Link from "next/link";
 import ProductGrid from "@/components/ProductGrid";
 import { getCatalogByCategory } from "@/lib/catalog";
 
-export const metadata: Metadata = { title: "Gifting" };
+export const metadata: Metadata = {
+  title: "Luxury Dry Fruit Gift Boxes & Corporate Gifting",
+  description:
+    "Bespoke dry fruit gift boxes for weddings, celebrations, and corporate clients. Custom sleeves, handwritten notes, and named-day delivery.",
+  keywords: [
+    "dry fruit gift boxes",
+    "corporate gifting dry fruits",
+    "wedding gift hampers",
+    "luxury gift hampers dry fruits",
+    "NOURA gifting",
+  ],
+  alternates: {
+    canonical: "/gifting",
+  },
+  openGraph: {
+    title: "Luxury Dry Fruit Gift Boxes & Corporate Gifting — NOURA",
+    description:
+      "Bespoke dry fruit gift boxes for weddings, celebrations, and corporate clients. Custom sleeves, handwritten notes, and named-day delivery.",
+    url: "/gifting",
+  },
+};
 export const revalidate = 60;
 
 export default async function GiftingPage() {

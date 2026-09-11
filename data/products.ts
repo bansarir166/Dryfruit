@@ -68,16 +68,14 @@ export const categories: CollectionItem[] = [
     name: "Cashews",
     slug: "cashews",
     description: "Whole jumbo kernels, pale and buttery, from the Konkan coast.",
-    image:
-      "https://images.unsplash.com/photo-1524593656068-fbac72624bb0?auto=format&fit=crop&w=1600&q=80",
+    image: "/products/cashew.jpeg",
   },
   {
     number: "03",
     name: "Pistachios",
     slug: "pistachios",
     description: "Iranian and Antep pistachios with a naturally vivid green heart.",
-    image:
-      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1600&q=80",
+    image: "/products/pista.jpeg",
   },
   {
     number: "04",
@@ -85,23 +83,21 @@ export const categories: CollectionItem[] = [
     slug: "walnuts",
     description: "Light, crisp halves from Kashmiri orchards, never bitter.",
     image:
-      "https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1524593656068-fbac72624bb0?auto=format&fit=crop&w=1600&q=80",
   },
   {
     number: "05",
     name: "Dates",
     slug: "dates",
     description: "Medjool and amber honey dates, plump, caramel-sweet, and clean.",
-    image:
-      "https://images.unsplash.com/photo-1600189083288-89e1c8b9b0cc?auto=format&fit=crop&w=1600&q=80",
+    image: "/products/dates.jpeg",
   },
   {
     number: "06",
     name: "Dried Fruits",
     slug: "dried-fruits",
     description: "Apricots, figs, and berries dried slowly to keep their character.",
-    image:
-      "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1600&q=80",
+    image: "/products/dryfruit.jpeg",
   },
   {
     number: "07",
@@ -123,7 +119,7 @@ export const categories: CollectionItem[] = [
 
 export const galleryImages = [
   {
-    src: "https://images.unsplash.com/photo-1769255485022-f9bb6d6e8169?auto=format&fit=crop&w=1400&q=80",
+    src: "/products/dryfruit.jpeg",
     alt: "Mixed nuts in a ceramic bowl",
     span: "lg:col-span-6 lg:row-span-2",
   },
@@ -138,7 +134,7 @@ export const galleryImages = [
     span: "lg:col-span-3",
   },
   {
-    src: "https://images.unsplash.com/photo-1600189083288-89e1c8b9b0cc?auto=format&fit=crop&w=900&q=80",
+    src: "/products/dates.jpeg",
     alt: "Dates on a dark plate",
     span: "lg:col-span-4",
   },
@@ -267,9 +263,9 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 214,
     images: [
+      "/products/pista.jpeg",
       "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1769255485022-f9bb6d6e8169?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1600&q=80",
     ],
     variants: [
       { label: "250g", grams: 250, price: 649 },
@@ -304,9 +300,9 @@ export const products: Product[] = [
     rating: 4.8,
     reviewCount: 163,
     images: [
+      "/products/cashew.jpeg",
       "https://images.unsplash.com/photo-1524593656068-fbac72624bb0?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1769255485022-f9bb6d6e8169?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1543208541-0961a29a8c3d?auto=format&fit=crop&w=1600&q=80",
     ],
     variants: [
       { label: "250g", grams: 250, price: 549 },
@@ -341,9 +337,9 @@ export const products: Product[] = [
     rating: 4.9,
     reviewCount: 142,
     images: [
+      "/products/dates.jpeg",
       "https://images.unsplash.com/photo-1600189083288-89e1c8b9b0cc?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1605027990121-cbae9e0642df?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1600&q=80",
     ],
     variants: [
       { label: "250g", grams: 250, price: 429 },
@@ -447,7 +443,7 @@ export const products: Product[] = [
     rating: 4.8,
     reviewCount: 64,
     images: [
-      "https://images.unsplash.com/photo-1769255485022-f9bb6d6e8169?auto=format&fit=crop&w=1600&q=80",
+      "/products/pista.jpeg",
       "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=1600&q=80",
     ],
     variants: [
@@ -652,8 +648,8 @@ export const products: Product[] = [
     rating: 4.8,
     reviewCount: 53,
     images: [
+      "/products/dates.jpeg",
       "https://images.unsplash.com/photo-1605027990121-cbae9e0642df?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1600189083288-89e1c8b9b0cc?auto=format&fit=crop&w=1600&q=80",
     ],
     variants: [
       { label: "250g", grams: 250, price: 399 },

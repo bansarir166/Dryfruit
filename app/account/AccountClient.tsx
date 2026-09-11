@@ -51,7 +51,6 @@ export default function AccountClient() {
   const [busy, setBusy] = useState(false);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (searchParams.get("error") === "admin") {
@@ -62,7 +61,6 @@ export default function AccountClient() {
   useEffect(() => {
     if (!user || !configured) {
       setOrders([]);
-      setIsAdmin(false);
       return;
     }
 
@@ -72,25 +70,18 @@ export default function AccountClient() {
     (async () => {
       try {
         const supabase = createClient();
-        const [{ data, error: fetchError }, { data: profile }] = await Promise.all([
-          supabase
-            .from("orders")
-            .select("id, amount_total, currency, status, created_at, items")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false }),
-          supabase.from("profiles").select("role").eq("id", user.id).maybeSingle(),
-        ]);
+        const { data, error: fetchError } = await supabase
+          .from("orders")
+          .select("id, amount_total, currency, status, created_at, items")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
 
         if (!cancelled) {
           if (fetchError) setOrders([]);
           else setOrders((data as OrderRow[]) || []);
-          setIsAdmin(profile?.role === "admin");
         }
       } catch {
-        if (!cancelled) {
-          setOrders([]);
-          setIsAdmin(false);
-        }
+        if (!cancelled) setOrders([]);
       } finally {
         if (!cancelled) setOrdersLoading(false);
       }
@@ -217,23 +208,13 @@ export default function AccountClient() {
             <p className="mt-4 max-w-md text-sm text-muted">Signed in as {displayName}</p>
             {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
           </div>
-          <div className="flex flex-wrap items-center gap-6">
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className="text-[11px] uppercase tracking-[0.22em] underline underline-offset-8"
-              >
-                Admin panel
-              </Link>
-            )}
-            <button
-              type="button"
-              onClick={() => signOut()}
-              className="text-[11px] uppercase tracking-[0.22em] underline underline-offset-8"
-            >
-              Sign out
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="text-[11px] uppercase tracking-[0.22em] underline underline-offset-8"
+          >
+            Sign out
+          </button>
         </div>
 
         <h2 className="mt-16 font-serif text-3xl">Orders</h2>

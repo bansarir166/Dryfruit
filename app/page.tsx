@@ -11,6 +11,8 @@ import InstagramGallery from "@/components/InstagramGallery";
 import Newsletter from "@/components/Newsletter";
 import { getCatalogProducts } from "@/lib/catalog";
 
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
+
 export const revalidate = 60;
 
 export default async function HomePage() {
@@ -18,6 +20,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
       <Hero />
       <Collection />
       <FeaturedProducts products={products} />

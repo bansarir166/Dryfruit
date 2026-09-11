@@ -2,8 +2,22 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Newsletter from "@/components/Newsletter";
+import { FaqJsonLd } from "@/components/seo/JsonLd";
 
-export const metadata: Metadata = { title: "Our Story" };
+export const metadata: Metadata = {
+  title: "Our Story & Sourcing Philosophy",
+  description:
+    "Learn how NOURA buys slowly, packs quietly, and sources directly from single orchards in California, Konkan, Kashmir, and Jordan.",
+  alternates: {
+    canonical: "/story",
+  },
+  openGraph: {
+    title: "Our Story & Sourcing Philosophy — NOURA",
+    description:
+      "Learn how NOURA buys slowly, packs quietly, and sources directly from single orchards in California, Konkan, Kashmir, and Jordan.",
+    url: "/story",
+  },
+};
 
 const faqs = [
   {
@@ -23,6 +37,7 @@ const faqs = [
 export default function StoryPage() {
   return (
     <div className="bg-ivory pt-24">
+      <FaqJsonLd faqs={faqs} />
       <section className="mx-auto max-w-[1440px] px-5 py-16 md:px-10 md:py-24">
         <p className="text-[11px] uppercase tracking-[0.28em] text-muted">The house</p>
         <h1 className="mt-4 max-w-4xl font-serif text-5xl leading-[0.95] md:text-7xl">

@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     const discountPercent = await resolveCouponPercent(couponCode);
 
     const stripe = getStripe();
-    const siteUrl = getSiteUrl();
+    const siteUrl = getSiteUrl(request);
 
     const line_items = items.map((item) => {
       const unitAmount = Math.round(item.price * (1 - discountPercent) * 100);

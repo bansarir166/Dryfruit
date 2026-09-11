@@ -3,7 +3,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { categories } from "@/data/products";
 
-export const metadata: Metadata = { title: "Collections" };
+export const metadata: Metadata = {
+  title: "Dry Fruit Collections — Almonds, Cashews, Pistachios & Dates",
+  description:
+    "Explore NOURA's curated collections by variety: California almonds, Konkan cashews, Antep pistachios, Kashmiri walnuts, Medjool dates, and luxury gift boxes.",
+  alternates: {
+    canonical: "/collections",
+  },
+  openGraph: {
+    title: "Dry Fruit Collections — NOURA",
+    description:
+      "Explore NOURA's curated collections by variety: California almonds, Konkan cashews, Antep pistachios, Kashmiri walnuts, Medjool dates, and luxury gift boxes.",
+    url: "/collections",
+  },
+};
 
 export default function CollectionsPage() {
   return (

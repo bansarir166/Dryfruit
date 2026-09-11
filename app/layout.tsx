@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { StoreProvider } from "@/context/StoreContext";
 import { AuthProvider } from "@/context/AuthContext";
 import SiteShell from "@/components/SiteShell";
+import { SITE_NAME, SITE_DEFAULT_TITLE, SITE_TITLE_TEMPLATE, SITE_DESCRIPTION, SITE_KEYWORDS, getSiteUrl } from "@/lib/seo";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -19,16 +20,67 @@ const outfit = Outfit({
   display: "swap",
 });
 
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "NOURA — Nature, Refined.",
-    template: "%s — NOURA",
+    default: SITE_DEFAULT_TITLE,
+    template: SITE_TITLE_TEMPLATE,
   },
-  description:
-    "Premium dry fruits, thoughtfully sourced and beautifully packed. Almonds, pistachios, cashews, dates and luxury gift boxes.",
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "./",
+    siteName: SITE_NAME,
+    title: SITE_DEFAULT_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "NOURA — Premium Artisanal Dry Fruits & Luxury Gift Boxes",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_DEFAULT_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
+  manifest: "/site.webmanifest",
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

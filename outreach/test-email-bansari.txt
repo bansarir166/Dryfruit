@@ -1,0 +1,20 @@
+Subject: Ready-made premium dry-fruit store — quick demo?
+
+Hi Bansari,
+
+I’ve built a modern, ready-made dry-fruit e-commerce website that businesses can take live quickly and customize with their own branding, products, pricing, and payment setup — without building everything from scratch.
+
+It includes:
+• Premium storefront (shop, collections, product pages, gift boxes)
+• Cart + checkout
+• Admin for products, orders, and coupons
+• Mobile-ready design
+
+Live demo: https://dryfruit-web.vercel.app/
+
+Would you like a short walkthrough to see if this could work for a dry-fruit / nuts brand you’re connected with — or for your own use?
+
+Happy to jump on a quick call or send a 2-minute Loom.
+
+Best,
+Sahil
