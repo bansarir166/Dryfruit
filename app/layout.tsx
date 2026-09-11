@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { StoreProvider } from "@/context/StoreContext";
 import { AuthProvider } from "@/context/AuthContext";
 import SiteShell from "@/components/SiteShell";
+import FirebaseAnalytics from "@/components/FirebaseAnalytics";
 import { SITE_NAME, SITE_DEFAULT_TITLE, SITE_TITLE_TEMPLATE, SITE_DESCRIPTION, SITE_KEYWORDS, getSiteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -82,10 +83,12 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
 };
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
       <body className="bg-ivory text-espresso font-sans antialiased">
+        <FirebaseAnalytics />
         <AuthProvider>
           <StoreProvider>
             <SiteShell>{children}</SiteShell>
