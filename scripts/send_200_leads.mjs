@@ -1,5 +1,7 @@
+#!/usr/bin/env node
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Load .env.local
 const envPath = resolve(process.cwd(), ".env.local");
@@ -22,7 +24,7 @@ if (existsSync(envPath)) {
 
 const apiKey = process.env.BREVO_API_KEY;
 if (!apiKey) {
-  console.error("Missing BREVO_API_KEY in environment");
+  console.error("Missing BREVO_API_KEY in environment or .env.local");
   process.exit(1);
 }
 
@@ -55,16 +57,15 @@ function saveSentEmail(registry, entry) {
 
 function parseCSVLine(line) {
   const result = [];
-  let current = '';
+  let current = "";
   let inQuotes = false;
-  
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
     if (char === '"') {
       inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
+    } else if (char === "," && !inQuotes) {
       result.push(current.trim());
-      current = '';
+      current = "";
     } else {
       current += char;
     }
@@ -74,23 +75,24 @@ function parseCSVLine(line) {
 }
 
 export async function sendPersonalizedEmail(lead) {
-  const recipientEmail = lead.contact.split("|").pop().trim();
-  const recipientName = lead.owner !== "N/A" ? lead.owner : lead.business_name;
-  
+  const contactParts = lead.contact ? lead.contact.split("|") : [];
+  const recipientEmail = contactParts.pop()?.trim();
+  const recipientName = lead.owner && lead.owner !== "N/A" ? lead.owner : lead.business_name;
+
   const subject = `Partnership opportunity: Turnkey luxury dry-fruit website & custom web build for ${lead.business_name}`;
 
   const text = `Dear ${recipientName},
 
-I was researching top gourmet snack & dry fruit businesses in ${lead.city}, ${lead.country} and came across ${lead.business_name}. Your collection of premium products and customer reputation caught my attention.
+I was researching top gourmet dry fruit, date & specialty nut businesses in ${lead.city}, ${lead.country} and came across ${lead.business_name}. Your collection of premium products and customer reputation caught my attention.
 
 I noticed that ${lead.why_need_website.toLowerCase()}
 
 We have developed a turnkey, ultra-luxurious e-commerce storefront specifically designed for dry fruit, date & gourmet nut retailers — plus custom website building options tailored specifically to your brand.
 
 What is included:
-- Cinematic Homepage: Custom luxury design tailored for gourmet food
+- Cinematic Homepage: Custom luxury design tailored for gourmet food (Garamond & Outfit aesthetics)
 - Interactive Custom Gift Box Builder: Allow customers to build their own date/nut gift boxes
-- Complete Commerce Stack: Integrated Stripe payments & cloud database backend
+- Full Commerce Stack: Integrated Stripe payments & cloud database backend
 - Turnkey Admin Dashboard: Manage products, orders, inventory & discount coupons
 - Custom Web Building Option: Fully customizable layout, branding, and features to fit your exact business goals
 
@@ -120,7 +122,7 @@ Bansari`;
               <h2 style="margin:0 0 20px;font-size:22px;color:#451a03;font-family:Georgia,serif;">Dear ${recipientName},</h2>
               
               <p style="font-size:15px;line-height:1.6;color:#44403c;">
-                I was researching top gourmet snack & dry fruit businesses in <strong>${lead.city}, ${lead.country}</strong> and came across <strong>${lead.business_name}</strong>. Your collection of premium products and customer reputation really caught my attention!
+                I was researching top gourmet dry fruit, date & specialty nut businesses in <strong>${lead.city}, ${lead.country}</strong> and came across <strong>${lead.business_name}</strong>. Your collection of premium products and customer reputation really caught my attention!
               </p>
               
               <p style="font-size:15px;line-height:1.6;color:#44403c;">
@@ -199,7 +201,7 @@ Bansari`;
 
 async function main() {
   const args = process.argv.slice(2);
-  let targetFileName = process.env.LEADS_FILE || "LEADS_BATCH_2.csv";
+  let targetFileName = process.env.LEADS_FILE || "LEADS_200_NEW.csv";
   let dryRun = false;
   let limit = Infinity;
   let startIndex = 0;
@@ -248,6 +250,7 @@ async function main() {
   const targetLeads = leads.slice(startIndex, startIndex + limit);
 
   console.log(`\n============================================================`);
+  console.log(`BREVO OUTREACH CAMPAIGN: 200 NEW LEADS (IDs 301-500)`);
   console.log(`Target File:         ${targetFileName}`);
   console.log(`Total In File:       ${leads.length} (Processing ${targetLeads.length})`);
   console.log(`Already In Registry: ${registry.set.size} sent recipients`);
@@ -285,7 +288,8 @@ async function main() {
           messageId: res.messageId
         });
         console.log(`[${actualIndex}/${leads.length}] SUCCESS: Sent to ${lead.business_name} (${recipientEmail}) - Message ID: ${res.messageId}`);
-        await new Promise((r) => setTimeout(r, 250));
+        // Safe 300ms pacing between emails
+        await new Promise((r) => setTimeout(r, 300));
       }
     } catch (err) {
       failCount++;
@@ -300,10 +304,8 @@ async function main() {
   console.log(`Skipped (Prev Sent): ${skippedCount}`);
   console.log(`Newly Sent:          ${successCount}`);
   console.log(`Failed:              ${failCount}`);
-  console.log(`============================================`);
+  console.log(`============================================\n`);
 }
-
-import { fileURLToPath } from "node:url";
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main();
