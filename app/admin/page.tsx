@@ -72,6 +72,26 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
+      {/* Analytics Intelligence Banner */}
+      <div className="mt-8 flex flex-col justify-between gap-4 rounded-lg border border-espresso/10 bg-cream/50 p-6 sm:flex-row sm:items-center">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-pistachio animate-pulse" />
+            <p className="text-[10px] uppercase tracking-[0.24em] text-muted">Storefront Intelligence</p>
+          </div>
+          <h3 className="mt-1 font-serif text-xl">Audience & Analytics</h3>
+          <p className="mt-1 text-xs text-muted">
+            Monitor real-time visitors, new vs returning users, top page views, traffic channels, and device insights.
+          </p>
+        </div>
+        <Link
+          href="/admin/analytics"
+          className="inline-flex shrink-0 items-center gap-2 rounded bg-espresso px-4 py-2.5 text-[11px] uppercase tracking-[0.18em] text-ivory transition-transform hover:-translate-y-0.5"
+        >
+          View Full Analytics →
+        </Link>
+      </div>
+
       <div className="mt-14 flex items-end justify-between gap-4">
         <h2 className="font-serif text-2xl">Recent orders</h2>
         <Link
