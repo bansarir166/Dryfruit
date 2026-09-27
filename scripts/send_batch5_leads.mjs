@@ -1,0 +1,340 @@
+#!/usr/bin/env node
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Load .env.local
+const envPath = resolve(process.cwd(), ".env.local");
+if (existsSync(envPath)) {
+  for (const line of readFileSync(envPath, "utf8").split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+    const i = trimmed.indexOf("=");
+    const key = trimmed.slice(0, i).trim();
+    let val = trimmed.slice(i + 1).trim();
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    if (!(key in process.env)) process.env[key] = val;
+  }
+}
+
+const apiKey = process.env.BREVO_API_KEY;
+if (!apiKey) {
+  console.error("Missing BREVO_API_KEY in environment or .env.local");
+  process.exit(1);
+}
+
+const sender = {
+  name: "Bansari",
+  email: "bansarir166@gmail.com"
+};
+
+const SENT_LOG_PATH = resolve(process.cwd(), "sent_emails.json");
+
+function loadSentRegistry() {
+  if (!existsSync(SENT_LOG_PATH)) {
+    return { set: new Set(), list: [] };
+  }
+  try {
+    const list = JSON.parse(readFileSync(SENT_LOG_PATH, "utf8"));
+    const set = new Set(list.map((entry) => (entry.email || "").toLowerCase().trim()));
+    return { set, list };
+  } catch (err) {
+    console.error("Warning: could not parse sent_emails.json:", err.message);
+    return { set: new Set(), list: [] };
+  }
+}
+
+function saveSentEmail(registry, entry) {
+  registry.set.add(entry.email.toLowerCase().trim());
+  registry.list.push(entry);
+  writeFileSync(SENT_LOG_PATH, JSON.stringify(registry.list, null, 2), "utf8");
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === "," && !inQuotes) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+export async function sendPersonalizedEmail(lead) {
+  const contactParts = lead.contact ? lead.contact.split("|") : [];
+  const recipientEmail = contactParts.pop()?.trim();
+  const recipientName = lead.owner && lead.owner !== "N/A" ? lead.owner : lead.business_name;
+
+  const subject = `Partnership opportunity: Turnkey luxury dry-fruit website & custom web build for ${lead.business_name}`;
+
+  const trackingParams = new URLSearchParams({
+    id: lead.id || "",
+    email: recipientEmail || "",
+    biz: lead.business_name || "",
+    name: recipientName || "",
+    city: lead.city || "",
+    country: lead.country || "",
+  });
+  const demoLink = `https://dryfruit-web.vercel.app/api/lead/click?${trackingParams.toString()}`;
+
+  const text = `Dear ${recipientName},
+
+I was researching top gourmet dry fruit, date & specialty nut businesses in ${lead.city}, ${lead.country} and came across ${lead.business_name}. Your collection of premium products and customer reputation caught my attention.
+
+I noticed that ${lead.why_need_website.toLowerCase()}
+
+We have developed a turnkey, ultra-luxurious e-commerce storefront specifically designed for dry fruit, date & gourmet nut retailers — plus custom website building options tailored specifically to your brand.
+
+What is included:
+- Cinematic Homepage: Custom luxury design tailored for gourmet food (Garamond & Outfit aesthetics)
+- Interactive Custom Gift Box Builder: Allow customers to build their own date/nut gift boxes
+- Full Commerce Stack: Integrated Stripe payments & cloud database backend
+- Turnkey Admin Dashboard: Manage products, orders, inventory & discount coupons
+- Custom Web Building Option: Fully customizable layout, branding, and features to fit your exact business goals
+
+Preview the Live Demo Storefront:
+${demoLink}
+
+Whether you want to acquire this ready-made storefront to launch in 24 hours or need a custom web build tailored for your business, we can set it up seamlessly.
+
+Would you be open for a quick 5-minute call or reply over email to discuss options?
+
+Best regards,
+Bansari`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>${subject}</title>
+</head>
+<body style="margin:0;padding:0;background:#f9f8f6;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#1c1917;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f8f6;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e7e5e4;border-radius:12px;padding:40px;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+          <tr>
+            <td>
+              <h2 style="margin:0 0 20px;font-size:22px;color:#451a03;font-family:Georgia,serif;">Dear ${recipientName},</h2>
+              
+              <p style="font-size:15px;line-height:1.6;color:#44403c;">
+                I was researching top gourmet dry fruit, date & specialty nut businesses in <strong>${lead.city}, ${lead.country}</strong> and came across <strong>${lead.business_name}</strong>. Your collection of premium products and customer reputation really caught my attention!
+              </p>
+              
+              <p style="font-size:15px;line-height:1.6;color:#44403c;">
+                I noticed that ${lead.why_need_website.toLowerCase()}
+              </p>
+
+              <div style="background:#fffbeb;border-left:4px solid #d97706;padding:16px;margin:24px 0;border-radius:6px;">
+                <p style="margin:0;font-size:15px;color:#92400e;font-weight:600;">
+                  ✨ Turnkey Ready-to-Launch Storefront + Custom Website Building Option
+                </p>
+              </div>
+
+              <h4 style="margin:20px 0 10px;font-size:16px;color:#1c1917;">What's ready in our solution:</h4>
+              <ul style="padding-left:20px;margin:0 0 24px;font-size:14px;line-height:1.8;color:#57534e;">
+                <li><strong>Cinematic Homepage:</strong> Custom luxury design tailored for gourmet food</li>
+                <li><strong>Interactive Custom Gift Box Builder:</strong> Allow customers to build their own date/nut gift boxes</li>
+                <li><strong>Full Commerce Stack:</strong> Integrated Stripe payments & cloud database backend</li>
+                <li><strong>Turnkey Admin Dashboard:</strong> Manage products, orders, inventory & discount coupons</li>
+                <li><strong>Custom Web Building Option:</strong> Fully customizable layout, branding, and features to fit your exact business goals</li>
+              </ul>
+
+              <div style="text-align:center;margin:32px 0;">
+                <a href="${demoLink}" target="_blank" style="background:#78350f;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:600;font-size:15px;display:inline-block;">
+                  👉 Preview Live Storefront Demo
+                </a>
+              </div>
+
+              <p style="font-size:15px;line-height:1.6;color:#44403c;">
+                Whether you want to acquire this complete ready-to-launch store or build a custom e-commerce experience from scratch, we can get your online sales up and running smoothly.
+              </p>
+
+              <p style="font-size:15px;line-height:1.6;color:#44403c;">
+                Would you be open for a quick 5-minute call or reply over email to explore options?
+              </p>
+
+              <hr style="border:none;border-top:1px solid #f5f5f4;margin:32px 0 24px;" />
+              
+              <p style="margin:0;font-size:15px;color:#1c1917;">
+                Best regards,<br/>
+                <strong>Bansari</strong>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  const payload = {
+    sender,
+    to: [{ email: recipientEmail, name: recipientName }],
+    subject,
+    textContent: text,
+    htmlContent: html,
+  };
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "api-key": apiKey,
+      Accept: "application/json"
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Failed to send to ${recipientEmail}: ${res.status} - ${errText}`);
+  }
+
+  return await res.json();
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  let targetFileName = "LEADS_300_BATCH5.csv";
+  let dryRun = false;
+  let limit = 300;
+  let startIndex = 0;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--dry-run") {
+      dryRun = true;
+    } else if (arg === "--limit" && args[i + 1]) {
+      limit = parseInt(args[++i], 10);
+    } else if (arg === "--start" && args[i + 1]) {
+      startIndex = Math.max(0, parseInt(args[++i], 10) - 1);
+    } else if (!arg.startsWith("-")) {
+      targetFileName = arg;
+    }
+  }
+
+  const csvPath = resolve(process.cwd(), targetFileName);
+  if (!existsSync(csvPath)) {
+    console.error(`Leads file not found: ${csvPath}`);
+    process.exit(1);
+  }
+
+  const content = readFileSync(csvPath, "utf-8");
+  const lines = content.split("\n").filter(l => l.trim().length > 0);
+  if (lines.length <= 1) {
+    console.error(`No lead entries found in ${targetFileName}`);
+    process.exit(1);
+  }
+
+  const headers = parseCSVLine(lines[0]);
+  const leads = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseCSVLine(lines[i]);
+    if (values.length >= headers.length) {
+      const lead = {};
+      headers.forEach((h, idx) => {
+        lead[h] = values[idx] || "";
+      });
+      leads.push(lead);
+    }
+  }
+
+  const registry = loadSentRegistry();
+  const targetLeads = leads.slice(startIndex, startIndex + limit);
+
+  console.log(`\n============================================`);
+  console.log(`OUTREACH CAMPAIGN DISPATCHER: ${targetFileName}`);
+  console.log(`Mode:            ${dryRun ? "SIMULATION (DRY RUN)" : "LIVE DISPATCH (BREVO SMTP)"}`);
+  console.log(`Total In File:   ${leads.length}`);
+  console.log(`Queue Range:     ${startIndex + 1} to ${startIndex + targetLeads.length} (${targetLeads.length} leads)`);
+  console.log(`Sent History:    ${registry.set.size} records in sent_emails.json`);
+  console.log(`Sender:          ${sender.name} <${sender.email}>`);
+  console.log(`============================================\n`);
+
+  let successCount = 0;
+  let skippedCount = 0;
+  let failCount = 0;
+
+  for (let i = 0; i < targetLeads.length; i++) {
+    const lead = targetLeads[i];
+    const actualIndex = startIndex + i + 1;
+    const contactParts = lead.contact ? lead.contact.split("|") : [];
+    const recipientEmail = contactParts.pop()?.trim();
+
+    if (!recipientEmail || !recipientEmail.includes("@")) {
+      console.warn(`[${actualIndex}/${leads.length}] ⚠️ SKIP: Invalid email format for ${lead.business_name}: "${lead.contact}"`);
+      skippedCount++;
+      continue;
+    }
+
+    const cleanEmail = recipientEmail.toLowerCase().trim();
+
+    // Deduplication check: NEVER send twice!
+    if (registry.set.has(cleanEmail)) {
+      console.log(`[${actualIndex}/${leads.length}] ⏭️ SKIP (Already Sent): ${lead.business_name} (${recipientEmail})`);
+      skippedCount++;
+      continue;
+    }
+
+    try {
+      if (dryRun) {
+        if (i < 5 || i === targetLeads.length - 1) {
+          console.log(`[${actualIndex}/${leads.length}] DRY RUN -> Would send to: ${lead.business_name} <${recipientEmail}>`);
+          console.log(`   Subject: Partnership opportunity: Turnkey luxury dry-fruit website & custom web build for ${lead.business_name}`);
+          console.log(`   Owner/Contact: ${lead.owner || lead.business_name}`);
+          console.log(`   Location: ${lead.city}, ${lead.country}`);
+          console.log(`   Tailored Pitch: ${lead.why_need_website.slice(0, 75)}...`);
+        } else if (i === 5) {
+          console.log(`   ... [dry-running remaining ${targetLeads.length - 6} leads] ...`);
+        }
+        successCount++;
+      } else {
+        const res = await sendPersonalizedEmail(lead);
+        successCount++;
+        saveSentEmail(registry, {
+          email: cleanEmail,
+          id: lead.id,
+          business: lead.business_name,
+          sentAt: new Date().toISOString(),
+          messageId: res.messageId
+        });
+        console.log(`[${actualIndex}/${targetLeads.length}] ✅ SENT: ${lead.business_name} (${recipientEmail}) -> MessageID: ${res.messageId}`);
+        // Pacing delay (300ms) to ensure steady delivery and avoid rate spikes
+        await new Promise((r) => setTimeout(r, 300));
+      }
+    } catch (err) {
+      failCount++;
+      console.error(`[${actualIndex}/${targetLeads.length}] ❌ ERROR: Failed for ${lead.business_name} (${recipientEmail}):`, err.message);
+    }
+  }
+
+  console.log("\n============================================");
+  console.log(`Campaign Summary (${targetFileName})`);
+  console.log(`Status:              ${dryRun ? "DRY RUN COMPLETE" : "LIVE DISPATCH COMPLETE"}`);
+  console.log(`Total Target:        ${targetLeads.length}`);
+  console.log(`Skipped (Prev Sent): ${skippedCount}`);
+  console.log(`Newly Dispatched:    ${successCount}`);
+  console.log(`Failed:              ${failCount}`);
+  console.log(`============================================\n`);
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}

@@ -1,0 +1,83 @@
+[
+  {
+    "name": "Zaini Milano Artisan Chocolate",
+    "email": "info@zainimilano.it",
+    "country": "Italy",
+    "city": "Milan",
+    "owner": "Luigi Zaini (CEO)",
+    "note": "Historic Milanese chocolatier pairing dark chocolate with roasted Mediterranean almonds; needs luxury boutique.",
+    "mx": "mail.register.it"
+  },
+  {
+    "name": "Slitti Cioccolato e Caffè",
+    "email": "info@slitti.it",
+    "country": "Italy",
+    "city": "Monsummano Terme, Pistoia",
+    "owner": "Andrea Slitti (Master Chocolatier)",
+    "note": "World-acclaimed Italian chocolate master crafting hazelnut spreads and roasted nut dragees; needs luxury online salon.",
+    "mx": "connect.italway.it"
+  },
+  {
+    "name": "Budhani Bros Waferwala Pune",
+    "email": "info@budhanibros.com",
+    "country": "India",
+    "city": "Pune, Maharashtra",
+    "owner": "Budhani Family (Owners)",
+    "note": "Pune's famous potato wafers, salted cashews, and roasted dry fruit chiwda; needs online souvenir order portal.",
+    "mx": "alt4.aspmx.l.google.com"
+  },
+  {
+    "name": "Selamlique Istanbul Gourmet Goods",
+    "email": "info@selamlique.com",
+    "country": "Turkey",
+    "city": "Istanbul",
+    "owner": "Caroline Koç (Co-Founder)",
+    "note": "Luxury Turkish brand crafting roasted almond croquant, mastic lokum, and single-origin coffee; needs luxury VIP boutique.",
+    "mx": "kocpyls-mx2.kocsistem.com.tr"
+  },
+  {
+    "name": "Qassim Dates Factory",
+    "email": "info@qassimdates.com",
+    "country": "Saudi Arabia",
+    "city": "Buraidah, Qassim",
+    "owner": "Saleh Al-Tuwaijri (Director)",
+    "note": "Heart of Saudi Arabia's premier Sukkari date region producing tender honey dates and pastes; needs modern corporate gifting portal.",
+    "mx": ""
+  },
+  {
+    "name": "Al Mohamadia Dates Saudi",
+    "email": "info@almohamadia.com",
+    "country": "Saudi Arabia",
+    "city": "Riyadh",
+    "owner": "Mohammad Al-Mohamadi (Director)",
+    "note": "Premium Saudi date groves cultivating organic Sukkari, Sagai, and Ajwa dates; needs digital luxury box configurator.",
+    "mx": ""
+  },
+  {
+    "name": "Aida Viennese Café & Pastry",
+    "email": "kundenservice@aida.at",
+    "country": "Austria",
+    "city": "Vienna",
+    "owner": "Dominik Prousek (Managing Director)",
+    "note": "Classic pink Viennese retro pastry chain baking Kremsschnitte, walnut crescent rolls, and hazelnut cakes; needs online pastry ordering.",
+    "mx": "server.aida.at"
+  },
+  {
+    "name": "Junge Die Bäckerei Hanseatic",
+    "email": "info@jb.de",
+    "country": "Germany",
+    "city": "Lübeck",
+    "owner": "Tobias Schulz (Managing Director)",
+    "note": "Hanseatic bakery since 1897 baking marzipan croissants, Franzbrötchen with cinnamon sugar, and walnut breads; needs digital bakery shop.",
+    "mx": "jb-de.mail.cloud.nospamproxy.com"
+  },
+  {
+    "name": "Kamps Bäckerei Handwerk NRW",
+    "email": "info@kamps.de",
+    "country": "Germany",
+    "city": "Schwalmtal",
+    "owner": "Thomas Schulz (CEO)",
+    "note": "One of Germany's leading craft bakeries baking freshly prepared seed rolls, apple turnovers, and nut twists; needs modern mobile app.",
+    "mx": "mx03.hornetsecurity.com"
+  }
+]

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatINR } from "@/lib/utils";
 import type { AdminOrder } from "@/lib/admin-shared";
+import { getClickedLeads } from "@/lib/lead-tracker";
+import { Flame } from "lucide-react";
 
 function startOfDayISO() {
   const d = new Date();
@@ -18,6 +20,7 @@ export default async function AdminDashboardPage() {
     { data: amountRows },
     { data: todayOrders },
     { count: pipelineCount },
+    clickedLeads,
   ] = await Promise.all([
     supabase
       .from("orders")
@@ -31,6 +34,7 @@ export default async function AdminDashboardPage() {
       .from("orders")
       .select("id", { count: "exact", head: true })
       .in("status", ["paid", "processing", "packed"]),
+    getClickedLeads(),
   ]);
 
   const recent = (orders || []) as Pick<
@@ -89,6 +93,32 @@ export default async function AdminDashboardPage() {
           className="inline-flex shrink-0 items-center gap-2 rounded bg-espresso px-4 py-2.5 text-[11px] uppercase tracking-[0.18em] text-ivory transition-transform hover:-translate-y-0.5"
         >
           View Full Analytics →
+        </Link>
+      </div>
+
+      {/* Hot Leads from Email Outreach Banner */}
+      <div className="mt-4 flex flex-col justify-between gap-4 rounded-lg border border-amber-900/20 bg-amber-50/60 p-6 sm:flex-row sm:items-center">
+        <div>
+          <div className="flex items-center gap-2">
+            <Flame className="h-4 w-4 text-amber-600 animate-bounce" />
+            <p className="text-[10px] uppercase tracking-[0.24em] font-semibold text-amber-900">
+              Email Outreach Pipeline
+            </p>
+          </div>
+          <h3 className="mt-1 font-serif text-xl text-amber-950">
+            Hot Leads ({clickedLeads.length})
+          </h3>
+          <p className="mt-1 text-xs text-amber-900/80">
+            {clickedLeads.length > 0
+              ? `${clickedLeads.length} prospective businesses have clicked your demo link in cold outreach emails.`
+              : "Track who clicks your live demo link in cold outreach emails. Instant Brevo alert dispatched on every click."}
+          </p>
+        </div>
+        <Link
+          href="/admin/leads"
+          className="inline-flex shrink-0 items-center gap-2 rounded bg-amber-900 px-4 py-2.5 text-[11px] uppercase tracking-[0.18em] text-ivory transition-transform hover:-translate-y-0.5"
+        >
+          View Hot Leads →
         </Link>
       </div>
 
